@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Brain } from "lucide-react";
 
 const Auth = () => {
-  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -33,22 +33,21 @@ const Auth = () => {
     try {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: `${cpf}@temp.local`, // Email temporário para Supabase
           password,
           options: {
-            data: { full_name: fullName },
-            emailRedirectTo: `${window.location.origin}/`
+            data: { full_name: fullName, cpf: cpf }
           }
         });
-        
+
         if (error) throw error;
-        toast.success("Cadastro realizado! Verifique seu email.");
+        toast.success("Cadastro realizado com sucesso!");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: `${cpf}@temp.local`, // Email temporário para Supabase
           password,
         });
-        
+
         if (error) throw error;
         toast.success("Login realizado com sucesso!");
         navigate("/");
@@ -90,14 +89,14 @@ const Auth = () => {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="cpf">CPF</Label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="cpf"
+                type="text"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
                 required
-                placeholder="seu@email.com"
+                placeholder="000.000.000-00"
               />
             </div>
             <div className="space-y-2">
@@ -108,6 +107,7 @@ const Auth = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={8}
                 placeholder="••••••••"
               />
             </div>

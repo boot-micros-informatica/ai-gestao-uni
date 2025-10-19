@@ -1,5 +1,7 @@
-import { Building2, Database, Settings, LayoutDashboard, Briefcase, Landmark, Users } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Building2, Database, Settings, LayoutDashboard, Briefcase, Landmark, Users, LogOut } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 import {
   Sidebar,
   SidebarContent,
@@ -26,6 +28,14 @@ const adminItems = [
 
 export function AppSidebar() {
   const { open } = useSidebar();
+  const navigate = useNavigate();
+  const { signOut, userRole } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("Logout realizado com sucesso!");
+    navigate("/auth");
+  };
 
   return (
     <Sidebar className="border-r border-sidebar-border">
@@ -53,7 +63,13 @@ export function AppSidebar() {
           <SidebarGroupLabel>Secretarias</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
+              {menuItems.filter(item => {
+                if (userRole?.role === "admin") return true;
+                if (item.url === "/sempog" && userRole?.department !== "sempog") return false;
+                if (item.url === "/semad" && userRole?.department !== "semad") return false;
+                if (item.url === "/semfaz" && userRole?.department !== "semfaz") return false;
+                return true;
+              }).map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
@@ -79,7 +95,10 @@ export function AppSidebar() {
           <SidebarGroupLabel>Gestão Interna</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminItems.map((item) => (
+              {adminItems.filter(item => {
+                if (item.url === "/admin" && userRole?.role !== "admin") return false;
+                return true;
+              }).map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
@@ -96,6 +115,17 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left hover:bg-destructive/10"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {open && <span>Sair</span>}
+                  </button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

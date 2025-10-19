@@ -9,6 +9,7 @@ import Semad from "./pages/Semad";
 import Semfaz from "./pages/Semfaz";
 import Admin from "./pages/Admin";
 import Settings from "./pages/Settings";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/auth" element={<Auth />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/sempog" element={<Sempog />} />
           <Route path="/semad" element={<Semad />} />

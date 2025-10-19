@@ -36,12 +36,15 @@ const Auth = () => {
           email: `${cpf}@temp.local`, // Email temporário para Supabase
           password,
           options: {
-            data: { full_name: fullName, cpf: cpf }
+            data: { full_name: fullName, cpf: cpf },
+            // emailRedirectTo: undefined // Removido para não exigir confirmação de email
           }
         });
 
         if (error) throw error;
-        toast.success("Cadastro realizado com sucesso!");
+        // toast.success("Cadastro realizado com sucesso!"); // Comentado para evitar confusão
+        toast.success("Usuário criado com sucesso! Faça login.");
+        setIsSignUp(false); // Muda automaticamente para tela de login
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: `${cpf}@temp.local`, // Email temporário para Supabase
